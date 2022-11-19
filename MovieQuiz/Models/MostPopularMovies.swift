@@ -1,11 +1,19 @@
 import Foundation
 
-struct MostPopularMovies: Codable {
+struct MostPopularMovies: Decodable {
     let errorMessage: String
     let items: [MostPopularMovie]
 }
 
-struct MostPopularMovie: Codable {
+struct MostPopularMovie: Decodable {
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        title = try container.decode(String.self, forKey: .title)
+        rating = try container.decode(String.self, forKey: .rating)
+        imageURL = try container.decode(URL.self, forKey: .imageURL)
+    }
+    
     let title: String
     let rating: String
     let imageURL: URL

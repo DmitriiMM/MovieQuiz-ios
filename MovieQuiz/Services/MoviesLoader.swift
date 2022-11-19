@@ -21,9 +21,12 @@ struct MoviesLoader: MoviesLoading {
             case .failure(let error):
                 handler(.failure(error))
             case .success(let data):
-                let moviesList = try? JSONDecoder().decode(MostPopularMovies.self, from: data)
-                guard let moviesList = moviesList else { return }
-                handler(.success(moviesList))
+                do {
+                    let moviesList = try JSONDecoder().decode(MostPopularMovies.self, from: data)
+                    handler(.success(moviesList))
+                } catch {
+                    print("Failed to parse: \(error.localizedDescription)")
+                }
             }
         }
     }

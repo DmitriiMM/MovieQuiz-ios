@@ -32,6 +32,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             showLoadingIndicator()
         
         alertPresenter = AlertPresenter(viewController: self)
+        activityIndicator.hidesWhenStopped = true
     }
     
     struct Top: Decodable {
@@ -89,12 +90,10 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     }
     
     func showLoadingIndicator() {
-        activityIndicator.isHidden = false
         activityIndicator.startAnimating()
     }
     
     func hideLoadingIndicator() {
-        activityIndicator.isHidden = true
         activityIndicator.stopAnimating()
     }
     
@@ -106,8 +105,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             message: message,
             buttonText: "Попробовать ещё раз",
             completion: { [weak self] _ in
-                guard let self = self else { return }
-                self.questionFactory?.requestNextQuestion()
+                self?.questionFactory?.requestNextQuestion()
             })
         alertPresenter?.show(model: alertModel)
     }
