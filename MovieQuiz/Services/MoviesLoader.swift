@@ -25,7 +25,7 @@ struct MoviesLoader: MoviesLoading {
                     let moviesList = try JSONDecoder().decode(MostPopularMovies.self, from: data)
                     handler(.success(moviesList))
                 } catch {
-                    print("Failed to parse: \(error.localizedDescription)")
+                    handler(.failure(error))
                 }
             }
         }
