@@ -6,9 +6,9 @@ final class MovieQuizViewController: UIViewController {
     @IBOutlet private var imageView: UIImageView!
     @IBOutlet private var textLabel: UILabel!
     @IBOutlet private var counterLabel: UILabel!
-    @IBOutlet weak var noButton: UIButton!
-    @IBOutlet weak var yesButton: UIButton!
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet private weak var noButton: UIButton!
+    @IBOutlet private weak var yesButton: UIButton!
+    @IBOutlet private weak var activityIndicator: UIActivityIndicatorView!
     
     private var presenter: MovieQuizPresenter?
     
@@ -94,36 +94,6 @@ final class MovieQuizViewController: UIViewController {
         imageView.layer.cornerRadius = 20
     }
     
-    private func showNextQuestionOrResults() {
-        presenter?.showNextQuestionOrResults()
-    }
-    
-    func showAnswerResult(isCorrect: Bool) {
-        if isCorrect {
-            imageView.layer.masksToBounds = true
-            imageView.layer.borderWidth = 8
-            imageView.layer.borderColor = UIColor.ypGreen.cgColor
-            presenter?.correctAnswers += 1
-        } else {
-            imageView.layer.masksToBounds = true
-            imageView.layer.borderWidth = 8
-            imageView.layer.borderColor = UIColor.ypRed.cgColor
-        }
-        
-        DispatchQueue.main.asyncAfter(deadline: .now()) { [weak self] in
-            guard let self = self else { return }
-            self.noButton.isEnabled = false
-            self.yesButton.isEnabled = false
-        }
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
-            guard let self = self else { return }
-            self.noButton.isEnabled = true
-            self.yesButton.isEnabled = true
-            self.imageView.layer.borderWidth = 0
-            self.presenter?.showNextQuestionOrResults()
-        }
-    }
     
     @IBAction private func yesButtonClicked(_ sender: UIButton) {
         presenter?.yesButtonClicked()
@@ -131,5 +101,19 @@ final class MovieQuizViewController: UIViewController {
     
     @IBAction private func noButtonClicked(_ sender: UIButton) {
         presenter?.noButtonClicked()
+    }
+    
+    func highlightImageBorderAndButtonsIsntEnabled(isCorrectAnswer: Bool) {
+        imageView.layer.masksToBounds = true
+        imageView.layer.borderWidth = 8
+        imageView.layer.borderColor = isCorrectAnswer ? UIColor.ypGreen.cgColor : UIColor.ypRed.cgColor
+        noButton.isEnabled = false
+        yesButton.isEnabled = false
+    }
+    
+    func stopHighlightImageBorderAndButtonsEnabled() {
+        imageView.layer.borderWidth = 0
+        noButton.isEnabled = true
+        yesButton.isEnabled = true
     }
 }

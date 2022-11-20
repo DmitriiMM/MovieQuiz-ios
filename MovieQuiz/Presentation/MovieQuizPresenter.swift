@@ -3,7 +3,7 @@ import UIKit
 final class MovieQuizPresenter: QuestionFactoryDelegate {
     
     private let questionsAmount: Int = 10
-    var correctAnswers: Int = 0
+    private var correctAnswers: Int = 0
     private var currentQuestionIndex: Int = 0
     
     weak var viewController: MovieQuizViewController?
@@ -28,6 +28,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     
     func resetQuestionIndex() {
         currentQuestionIndex = 0
+        correctAnswers = 0
     }
     
     func switchToNextQuestion() {
@@ -49,14 +50,6 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         didAnswer(isYes: false)
     }
     
-    private func didAnswer(isYes: Bool) {
-        guard let currentQuestion = currentQuestion else { return }
-        
-        let givenAnswer = isYes
-        
-        viewController?.showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
-    }
-    
     func didReceiveNextQuestion(question: QuizQuestion?) {
         guard let question = question else { return }
         currentQuestion = question
@@ -66,7 +59,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         }
     }
     
-    func showNextQuestionOrResults() {
+    func proceedToNextQuestionOrResults() {
         if self.isLastQuestion() {
             guard let statisticService = statisticService else { return }
             statisticService.store(correct: correctAnswers, total: self.questionsAmount)
@@ -85,7 +78,6 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
                 })
             alertPresenter?.show(model: alertModel)
             self.resetQuestionIndex()
-            correctAnswers = 0
         } else {
             self.switchToNextQuestion()
             questionFactory?.requestNextQuestion()
@@ -99,5 +91,30 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     
     func didFailToLoadData(with error: Error) {
         viewController?.showNetworkError(message: error.localizedDescription)
+    }
+    
+    func didAnswer(isCorrectAnswer: Bool) {
+        if isCorrectAnswer {
+            correctAnswers += 1
+        }
+    }
+    
+    private func didAnswer(isYes: Bool) {
+        guard let currentQuestion = currentQuestion else { return }
+        
+        let givenAnswer = isYes
+        
+        proceedWithAnswer(isCorrect: givenAnswer == currentQuestion.correctAnswer)
+    }
+    
+    func proceedWithAnswer(isCorrect: Bool) {
+        didAnswer(isCorrectAnswer: isCorrect)
+        viewController?.highlightImageBorderAndButtonsIsntEnabled(isCorrectAnswer: isCorrect)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+            guard let self = self else { return }
+            self.viewController?.stopHighlightImageBorderAndButtonsEnabled()
+            self.proceedToNextQuestionOrResults()
+        }
     }
 }
