@@ -1,6 +1,6 @@
 import UIKit
 
-final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
+final class MovieQuizViewController: UIViewController {
     
     
     @IBOutlet private var imageView: UIImageView!
@@ -9,10 +9,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     @IBOutlet weak var noButton: UIButton!
     @IBOutlet weak var yesButton: UIButton!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-    
-    private var questionFactory: QuestionFactoryProtocol?
-    
-    private var statisticService: StatisticService?
     
     private var presenter: MovieQuizPresenter?
     
@@ -70,20 +66,12 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         }
     }
     
-    func didLoadDataFromServer() {
-        presenter?.didLoadDataFromServer()
-    }
-
-    func didFailToLoadData(with error: Error) {
-        presenter?.didFailToLoadData(with: error)
-    }
-    
     func showLoadingIndicator() {
         activityIndicator.startAnimating()
     }
     
     func hideLoadingIndicator() {
-        activityIndicator.stopAnimating()
+        activityIndicator.isHidden = true
     }
     
     func showNetworkError(message: String) {
@@ -94,13 +82,9 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             message: message,
             buttonText: "Попробовать ещё раз",
             completion: { [weak self] _ in
-                self?.questionFactory?.requestNextQuestion()
+                self?.presenter?.questionFactory?.requestNextQuestion()
             })
         presenter?.alertPresenter?.show(model: alertModel)
-    }
-    
-    func didReceiveNextQuestion(question: QuizQuestion?) {
-        presenter?.didReceiveNextQuestion(question: question)
     }
     
     func show(quiz step: QuizStepViewModel) {

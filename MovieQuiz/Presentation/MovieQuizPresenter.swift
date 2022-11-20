@@ -2,41 +2,37 @@ import UIKit
 
 final class MovieQuizPresenter: QuestionFactoryDelegate {
     
-    let questionsAmount: Int = 10
+    private let questionsAmount: Int = 10
+    var correctAnswers: Int = 0
     private var currentQuestionIndex: Int = 0
     
-    var currentQuestion: QuizQuestion?
     weak var viewController: MovieQuizViewController?
-    
-    var correctAnswers: Int = 0
-    private var questionFactory: QuestionFactoryProtocol?
-    
+    private var currentQuestion: QuizQuestion?
     private var statisticService: StatisticService?
+    var questionFactory: QuestionFactoryProtocol?
     var alertPresenter: AlertPresenter?
     
     
     init(viewController: MovieQuizViewController) {
         self.viewController = viewController
         alertPresenter = AlertPresenter(viewController: viewController)
-
-            statisticService = StatisticServiceImplementation()
-
+        statisticService = StatisticServiceImplementation()
         questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
-            questionFactory?.loadData()
-            viewController.showLoadingIndicator()
-        }
+        questionFactory?.loadData()
+        viewController.showLoadingIndicator()
+    }
     
-       func isLastQuestion() -> Bool {
-           currentQuestionIndex == questionsAmount - 1
-       }
-       
-       func resetQuestionIndex() {
-           currentQuestionIndex = 0
-       }
-       
-       func switchToNextQuestion() {
-           currentQuestionIndex += 1
-       }
+    func isLastQuestion() -> Bool {
+        currentQuestionIndex == questionsAmount - 1
+    }
+    
+    func resetQuestionIndex() {
+        currentQuestionIndex = 0
+    }
+    
+    func switchToNextQuestion() {
+        currentQuestionIndex += 1
+    }
     
     func convert(model: QuizQuestion) -> QuizStepViewModel {
         return QuizStepViewModel(
