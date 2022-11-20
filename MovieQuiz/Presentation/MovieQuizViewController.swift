@@ -23,6 +23,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        presenter.viewController = self
+        
         view.backgroundColor = .ypBlack
         imageView.layer.cornerRadius = 20
             questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
@@ -112,7 +114,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     
     func didReceiveNextQuestion(question: QuizQuestion?) {
         guard let question = question else { return }
-        currentQuestion = question
+        presenter.currentQuestion = question
         let viewModel = presenter.convert(model: question)
         DispatchQueue.main.async { [weak self] in
             self?.show(quiz: viewModel)
@@ -153,7 +155,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         }
     }
     
-    private func showAnswerResult(isCorrect: Bool) {
+    func showAnswerResult(isCorrect: Bool) {
         if isCorrect {
             imageView.layer.masksToBounds = true
             imageView.layer.borderWidth = 8
@@ -181,14 +183,10 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     }
     
     @IBAction private func yesButtonClicked(_ sender: UIButton) {
-        guard let currentQuestion = currentQuestion else {return }
-        
-        showAnswerResult(isCorrect: currentQuestion.correctAnswer)
+        presenter.yesButtonClicked()
     }
     
     @IBAction private func noButtonClicked(_ sender: UIButton) {
-        guard let currentQuestion = currentQuestion else {return }
-        
-        showAnswerResult(isCorrect: !currentQuestion.correctAnswer)
+        presenter.noButtonClicked()
     }
 }
