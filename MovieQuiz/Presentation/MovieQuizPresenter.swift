@@ -15,7 +15,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     
     init(viewController: MovieQuizViewControllerProtocol) {
         self.viewController = viewController
-        alertPresenter = AlertPresenter(viewController: viewController as! UIViewController)
+        alertPresenter = AlertPresenter()
         statisticService = StatisticServiceImplementation()
         questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
         questionFactory?.loadData()
@@ -76,7 +76,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
                     guard let self = self else { return }
                     self.questionFactory?.requestNextQuestion()
                 })
-            alertPresenter?.show(model: alertModel)
+            alertPresenter?.show(controller: (viewController as! UIViewController), model: alertModel)
             self.resetQuestionIndex()
         } else {
             self.switchToNextQuestion()
@@ -116,5 +116,16 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
             self.viewController?.stopHighlightImageBorderAndButtonsEnabled()
             self.proceedToNextQuestionOrResults()
         }
+    }
+    
+    func showErrorAlert(message: String) {
+        let alertModel = AlertModel(
+            title: "Ошибка",
+            message: message,
+            buttonText: "Попробовать ещё раз",
+            completion: { [weak self] _ in
+                self?.questionFactory?.requestNextQuestion()
+            })
+        alertPresenter?.show(controller: viewController as? UIViewController, model: alertModel)
     }
 }

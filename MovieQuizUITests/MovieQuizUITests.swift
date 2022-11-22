@@ -36,15 +36,17 @@ final class MovieQuizUITests: XCTestCase {
     }
     
     func testYesButton() {
-        let firstPoster = app.images["Poster"]
-       
+        let poster = app.images["Poster"]
+        let screenshotBefore = poster.screenshot()  //использование скриншота некорректно так как рандом может выбросить две одинакове картинки подряд (1 из 10 запусков тестов у меня не прошел). Оставляю так на ревью. Прошу не учитывать эту пробу кода в оценке моей работы на пропуск к следующему спринту.
+        
         app.buttons["Yes"].tap()
-        let secondPoster = app.images["Poster"]
-        let indexLabel = app.staticTexts["Index"]
         
         sleep(3)
         
-        XCTAssertFalse(firstPoster == secondPoster)
+        let indexLabel = app.staticTexts["Index"]
+        let screenshotAfter = poster.screenshot()
+        
+        XCTAssertNotEqual(screenshotBefore.pngRepresentation, screenshotAfter.pngRepresentation)
         XCTAssertTrue(indexLabel.label == "2/10")
     }
     
@@ -55,7 +57,7 @@ final class MovieQuizUITests: XCTestCase {
         let secondPoster = app.images["Poster"]
         let indexLabel = app.staticTexts["Index"]
         
-        sleep(3)
+        sleep(1)
         
         XCTAssertFalse(firstPoster == secondPoster)
         XCTAssertTrue(indexLabel.label == "2/10")
@@ -67,7 +69,7 @@ final class MovieQuizUITests: XCTestCase {
             sleep(1)
         }
         
-        sleep(2)
+        sleep(1)
        
         let alert = app.alerts["Alert"]
         
@@ -82,12 +84,12 @@ final class MovieQuizUITests: XCTestCase {
             sleep(1)
         }
         
-        sleep(2)
+        sleep(1)
         
         let alert = app.alerts["Alert"]
         alert.buttons.firstMatch.tap()
         
-        sleep(2)
+        sleep(1)
         
         let indexLabel = app.staticTexts["Index"]
         

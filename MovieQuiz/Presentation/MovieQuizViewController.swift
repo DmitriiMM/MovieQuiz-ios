@@ -76,15 +76,8 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
     
     func showNetworkError(message: String) {
         hideLoadingIndicator()
-        
-        let alertModel = AlertModel(
-            title: "Ошибка",
-            message: message,
-            buttonText: "Попробовать ещё раз",
-            completion: { [weak self] _ in
-                self?.presenter?.questionFactory?.requestNextQuestion()
-            })
-        presenter?.alertPresenter?.show(model: alertModel)
+        presenter?.showErrorAlert(message: message)
+      
     }
     
     func show(quiz step: QuizStepViewModel) {
