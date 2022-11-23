@@ -9,7 +9,7 @@ final class MovieQuizViewControllerProtocolMock: UIViewController, MovieQuizView
     }
     
     func show(quiz step: QuizStepViewModel) {
-        viewModel = step
+       
     }
     
     func highlightImageBorderAndButtonsIsntEnabled(isCorrectAnswer: Bool) {
