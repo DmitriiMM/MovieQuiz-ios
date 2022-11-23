@@ -1,13 +1,15 @@
 import XCTest
 @testable import MovieQuiz
 
-final class MovieQuizViewControllerProtocolMock: MovieQuizViewControllerProtocol {
+final class MovieQuizViewControllerProtocolMock: UIViewController, MovieQuizViewControllerProtocol {
+    var viewModel: QuizStepViewModel?
+    
     func stopHighlightImageBorderAndButtonsEnabled() {
         
     }
     
     func show(quiz step: QuizStepViewModel) {
-    
+        viewModel = step
     }
     
     func highlightImageBorderAndButtonsIsntEnabled(isCorrectAnswer: Bool) {
@@ -34,10 +36,15 @@ final class MovieQuizPresenterTests: XCTestCase {
         
         let emptyData = Data()
         let question = QuizQuestion(image: emptyData, text: "Question Text", correctAnswer: true)
-        let viewModel = sut.convert(model: question)
+        sut.didReceiveNextQuestion(question: question)
         
-         XCTAssertNotNil(viewModel.image)
-        XCTAssertEqual(viewModel.question, "Question Text")
-        XCTAssertEqual(viewModel.questionNumber, "1/10")
+        DispatchQueue.main.async {
+            let model = viewControllerMock.viewModel
+            
+            
+            XCTAssertNotNil(model?.image)
+            XCTAssertEqual(model?.question, "Question Text")
+            XCTAssertEqual(model?.questionNumber, "1/10")
+        }
     }
 }

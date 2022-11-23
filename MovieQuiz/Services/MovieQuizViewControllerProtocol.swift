@@ -1,6 +1,6 @@
-import Foundation
+import UIKit
 
-protocol MovieQuizViewControllerProtocol: AnyObject {
+protocol MovieQuizViewControllerProtocol: UIViewController {
     func show(quiz step: QuizStepViewModel)
     
     func highlightImageBorderAndButtonsIsntEnabled(isCorrectAnswer: Bool)

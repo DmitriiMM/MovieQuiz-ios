@@ -35,7 +35,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         currentQuestionIndex += 1
     }
     
-    func convert(model: QuizQuestion) -> QuizStepViewModel {
+    private func convert(model: QuizQuestion) -> QuizStepViewModel {
         return QuizStepViewModel(
             image: UIImage(data: model.image) ?? UIImage(),
             question: model.text,
@@ -76,7 +76,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
                     guard let self = self else { return }
                     self.questionFactory?.requestNextQuestion()
                 })
-            alertPresenter?.show(controller: (viewController as! UIViewController), model: alertModel)
+            alertPresenter?.show(controller: viewController, model: alertModel)
             self.resetQuestionIndex()
         } else {
             self.switchToNextQuestion()
@@ -126,6 +126,6 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
             completion: { [weak self] _ in
                 self?.questionFactory?.requestNextQuestion()
             })
-        alertPresenter?.show(controller: viewController as? UIViewController, model: alertModel)
+        alertPresenter?.show(controller: viewController, model: alertModel)
     }
 }
